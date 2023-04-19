@@ -7,15 +7,16 @@
     <title>Calculator</title>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="style.css" />
+    
   </head>
   <body>
     <header>
+        <div id ="spacer1"></div>
       <h1>Calculator</h1>
       <h2>A The Odin Project Assignment</h2>
     </header>
     <div class="calculator">
-      <div class="screen">&nbsp</div>
-      <button id="clear">Clear</button>
+      <div class="screen">&nbsp</div> 
       <div class="buttons">
         <div class="numbers">
           <button class="number">1</button>
@@ -28,15 +29,16 @@
           <button class="number">8</button>
           <button class="number">9</button>
           <button class="number">0</button>
-        </div>
-        <div class="operators">
           <button class="operator">+</button>
           <button class="operator">-</button>
+        </div>
+        <div class="operators">     
           <button class="operator">*</button>
           <button class="operator">/</button>
-          <button class="operator">=</button>
+          <button class="operator" id="equals">=</button>
         </div>
       </div>
+      <button id="clear">Clear</button>
     </div>
   </body>
 </html>

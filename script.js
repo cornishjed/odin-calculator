@@ -1,137 +1,144 @@
-let currentNum = 0;
-let num1 = "";
-let num2 = "";
-let sum = "";
-let statement = [];
-let statementPos = 0;
-let display = document.querySelector(".screen");
-let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-let currentOperator = "";
+let currentNum = "";
 let currentOperation = [];
+let firstNum = true;
+let completeSum = false;
+let display = document.querySelector(".screen");
 
-function initialize() {
+function run() {
+  populateDisplay(0);
   let buttons = document.querySelectorAll("button");
+
+  let operators = ["+", "-", "*", "/", "="];
 
   buttons.forEach((button) => {
     button.addEventListener("click", function (e) {
-      if (button.textContent === "Clear") {
+      let input = button.textContent;
+
+      // reset all values and end sequence
+      if (input === "Clear") {
+        console.log("here");
         reset();
-        clearDisplay();
         return;
       }
 
-      if (currentOperator) {
-        if (numbers.includes(+button.textContent)) {
-          num2 += button.textContent;
-          populateDisplay(num2);
-        } else {
-          clearDisplay();
-          currentOperator = button.textContent;
-          currentOperation[2] = num2;
-          console.log(currentOperation);
-          performCalculations();
+      // check for existing number
+      getNumber(input);
+      populateDisplay(currentNum);
+
+      if (firstNum && operators.includes(input)) {
+        currentOperation[0] = currentNum;
+        if (input === "=") {
+          populateDisplay(0);
+          reset();
+          return;
         }
+        currentOperation[1] = input;
+        currentNum = "";
+        getNumber(input);
+        firstNum = false;
       }
 
-      if (button.textContent === "=") {
-        populateDisplay(sum);
-        reset();
-        return;
-      }
-
-      if (numbers.includes(+button.textContent)) {
-        num1 += button.textContent;
-        populateDisplay(num1);
-        console.log(num1);
-        return;
-      } else {
-        currentOperator = button.textContent;
-        currentOperation[0] = num1;
-        num1 = "";
-        currentOperation[1] = currentOperator;
-        return;
+      if (firstNum === false && operators.includes(input)) {
+        currentOperation[2] = +currentNum;
+        performCalculations();
+        completeSum = true;
+        currentNum = "";
+        currentOperation[1] = input;
       }
     });
   });
 
-  /*  clearButton.addEventListener("click", function (e) {
-    currentNum = 0;
-    sum = 0;
-    num1 = 0;
-    populateDisplay(currentNum);
-  }); */
   return;
 }
 
-function getNumber() {}
-
 function performCalculations() {
+  console.log(currentOperation);
   switch (currentOperation[1]) {
     case "+":
-      sum = add();
-      num1 = sum;
-      num2 = "";
-      console.log(sum);
-      populateDisplay(sum);
+      console.log(currentOperation);
+      currentOperation[0] = add();
+      populateDisplay(currentOperation[0]);
       break;
     case "-":
-      sum = subtract();
-      num1 = sum;
-      num2 = "";
-      populateDisplay(sum);
+      currentOperation[0] = subtract();
+      populateDisplay(currentOperation[0]);
       break;
     case "*":
-      sum = multiply();
-      num1 = sum;
-      num2 = "";
-      populateDisplay(sum);
+      if (+currentOperation[2] !== 0) {
+        currentOperation[0] = multiply();
+        populateDisplay(currentOperation[0]);
+      } else {
+        currentOperation[2] = multiply();
+        populateDisplay(currentOperation[2]);
+      }
       break;
     case "/":
-      sum = divide();
-      num1 = sum;
-      num2 = "";
-      populateDisplay(sum);
+      if (+currentOperation[2] !== 0) {
+        currentOperation[0] = divide();
+        populateDisplay(currentOperation[0]);
+      }
+
+      if (
+        (+currentOperation[0] === 0 && completeSum) ||
+        (+currentOperation[2] === 0 && completeSum)
+      ) {
+        populateDisplay("error");
+        break;
+      }
+
       break;
     case "=":
-      populateDisplay(sum);
+      populateDisplay(currentOperation[0]);
       break;
   }
 }
 
 function add() {
+  currentOperation[1] = "";
   return +currentOperation[0] + +currentOperation[2];
 }
 
 function subtract() {
+  currentOperation[1] = "";
   return +currentOperation[0] - +currentOperation[2];
 }
 
 function multiply() {
+  currentOperation[1] = "";
   return +currentOperation[0] * +currentOperation[2];
 }
 
 function divide() {
-  return +currentOperation[0] / +currentOperation[2];
-}
-
-function equals() {
-  return sum;
+  currentOperation[1] = "";
+  let sum = +currentOperation[0] / +currentOperation[2];
+  if (Number.isInteger(sum)) {
+    return sum;
+  }
+  sum = sum.toString();
+  sum = sum.substring(0, 12);
+  return +sum.toString();
 }
 
 function populateDisplay(displayNum) {
   display.textContent = displayNum;
 }
 
-function clearDisplay() {
-  display.innerHTML = "&nbsp";
-}
-
 function reset() {
-  num1 = "";
-  num2 = "";
-  currentOperator = "";
-  sum = "";
-  statement.length = 0;
+  firstNum = true;
+  completeSum = false;
+  currentNum = "";
+  currentOperation[0] = "";
+  currentOperation[1] = "";
+  currentOperation[2] = "";
+  display.innerHTML = "0";
 }
 
-initialize();
+function getNumber(input) {
+  let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+
+  if (numbers.includes(+input)) {
+    currentNum += input;
+  }
+}
+
+run();
