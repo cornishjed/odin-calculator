@@ -69,7 +69,7 @@ function performCalculations() {
         populateDisplay(currentOperation[0]);
       } else {
         currentOperation[2] = multiply();
-        populateDisplay(currentOperation[2]);
+        populateDisplay(currentOperation[0]);
       }
       break;
     case "/":
